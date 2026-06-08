@@ -1,0 +1,27 @@
+{
+  "name": "はしGO｜次、どこ行く？を10秒で。",
+  "short_name": "はしGO",
+  "description": "飲み会の2軒目・3軒目に、今すぐ入れる近くの居酒屋を提案。",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAFAF8",
+  "theme_color": "#1E3A5F",
+  "lang": "ja",
+  "categories": ["food", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
