@@ -171,6 +171,35 @@ export function IconShare({ className, size }: P) {
   );
 }
 
+export function IconGift({ className, size }: P) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M20 12v10H4V12M22 7H2v5h20V7zM12 22V7" />
+      <path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z" />
+      <path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z" />
+    </svg>
+  );
+}
+
+export function IconUsers({ className, size }: P) {
+  return (
+    <svg {...base(size, className)}>
+      <circle cx="9" cy="7" r="3" />
+      <path d="M3 21c0-3.5 2.5-5 6-5s6 1.5 6 5" />
+      <path d="M15 7a3 3 0 110 0" strokeDasharray="1 0" />
+      <path d="M21 21c0-3.5-2-4.5-4-5" />
+    </svg>
+  );
+}
+
+export function IconFlame({ className, size }: P) {
+  return (
+    <svg {...base(size, className)}>
+      <path d="M12 22c4 0 7-3 7-7 0-2-1-4-3-5 1 3-1 5-2 5-1-3-3-5-4-8-2 3-2 6-2 8s-1 2-2 2c0-2-1-4-2-5-1 3-1 6 0 8a6 6 0 006 2z" />
+    </svg>
+  );
+}
+
 // ロゴの提灯（装飾）
 export function IconLantern({ className, size }: P) {
   return (

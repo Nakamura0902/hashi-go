@@ -8,10 +8,9 @@ import { dataApi } from "@/lib/data";
 import { getCurrentUserId } from "@/lib/auth";
 import { SeatBadge } from "./SeatBadge";
 import { ScoreBadge } from "./ScoreBadge";
-import { Tag } from "@/components/ui";
-import { IconHeart, IconArrowRight } from "@/components/ui/icons";
+import { IconHeart, IconMap } from "@/components/ui/icons";
 
-// 検索結果の店舗カード（おすすめ一覧・お気に入りで共用）
+// 検索結果の店舗カード（マガジンスタイル）
 export function StoreCard({
   item,
   initialFav = false,
@@ -39,8 +38,8 @@ export function StoreCard({
       onClick={() => router.push(`/store/${store.id}`)}
       className="animate-card-in cursor-pointer overflow-hidden rounded-md bg-white shadow-card transition-shadow hover:shadow-cardhover"
     >
-      {/* 画像 + オーバーレイ */}
-      <div className="relative h-44 w-full bg-bg">
+      {/* マガジンスタイル: 大きい画像 + テキストオーバーレイ */}
+      <div className="relative h-52 w-full bg-bg">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={store.images[0]}
@@ -48,46 +47,49 @@ export function StoreCard({
           loading="lazy"
           className="h-full w-full object-cover"
         />
-        {/* 下部グラデーション：バッジの視認性向上 */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
-        <SeatBadge status={seat.availability} className="absolute left-2 top-2 shadow-sm" />
+        {/* 強めのグラデーション（下半分） */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+
+        {/* 空席バッジ（左上） */}
+        <SeatBadge status={seat.availability} className="absolute left-2.5 top-2.5 shadow-sm" />
+
+        {/* お気に入り（右上） */}
         <button
           onClick={toggleFav}
           aria-label="お気に入り"
-          className="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-full bg-white/90 shadow-sm backdrop-blur-sm active:scale-90"
+          className="absolute right-2.5 top-2.5 grid h-9 w-9 place-items-center rounded-full bg-black/30 backdrop-blur-sm active:scale-90"
         >
-          <IconHeart size={18} filled={fav} className={fav ? "text-primary" : "text-muted"} />
+          <IconHeart size={18} filled={fav} className={fav ? "text-primary" : "text-white"} />
         </button>
+
+        {/* 雰囲気タグ + 店名（画像下部オーバーレイ） */}
+        <div className="absolute bottom-0 left-0 right-0 p-3.5">
+          <div className="mb-1.5 flex flex-wrap gap-1.5">
+            {store.moods.map((m) => (
+              <span
+                key={m}
+                className="rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm"
+              >
+                {m}
+              </span>
+            ))}
+          </div>
+          <h3 className="text-[19px] font-bold leading-tight text-white drop-shadow-sm">
+            {store.name}
+          </h3>
+        </div>
       </div>
 
-      {/* 本文 */}
-      <div className="px-3.5 pb-3.5 pt-3">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="line-clamp-2 text-[17px] font-bold text-ink">{store.name}</h3>
-          <ScoreBadge score={item.score} />
-        </div>
-
-        <div className="mt-1.5 flex flex-wrap gap-1.5">
-          {store.moods.map((m) => (
-            <Tag key={m}>{m}</Tag>
-          ))}
-        </div>
-
-        <div className="mt-2 flex items-center gap-3 text-xs text-sub">
+      {/* メタデータ行 */}
+      <div className="flex items-center justify-between px-3.5 py-2.5">
+        <div className="flex items-center gap-3 text-xs text-sub">
           <span className="flex items-center gap-1">
-            <span className="text-[10px]">📍</span>
+            <IconMap size={12} className="shrink-0 text-muted" />
             徒歩{walkMin}分 · {formatDistance(distanceM)}
           </span>
-          <span className="flex items-center gap-1">
-            <span className="text-[10px]">💴</span>
-            〜{store.averageBudget.toLocaleString()}円/人
-          </span>
+          <span>¥ 〜{store.averageBudget.toLocaleString()}/人</span>
         </div>
-
-        <div className="mt-3 flex items-center justify-end gap-0.5 border-t border-line pt-2.5 text-sm font-semibold text-primary">
-          詳しく見る
-          <IconArrowRight size={15} />
-        </div>
+        <ScoreBadge score={item.score} />
       </div>
     </article>
   );

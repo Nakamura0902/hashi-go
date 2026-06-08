@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { IconChevronLeft } from "./icons";
+import { IconChevronLeft, IconStore } from "./icons";
 
 // ── 画面ラッパー（下部ナビ分の余白を確保）──
 export function Screen({
@@ -228,7 +228,9 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center px-8 py-16 text-center">
-      <div className="mb-3 text-4xl">🏮</div>
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-navy/8">
+        <IconStore size={30} className="text-navy/50" />
+      </div>
       <p className="text-base font-bold text-ink">{title}</p>
       {description && <p className="mt-1 text-sm text-sub">{description}</p>}
       {action && <div className="mt-5 w-full">{action}</div>}

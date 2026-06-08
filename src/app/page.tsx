@@ -14,6 +14,7 @@ import {
   IconMinus,
   IconCheck,
   IconLantern,
+  IconMap,
 } from "@/components/ui/icons";
 
 const BUDGETS: { label: string; value: number }[] = [
@@ -100,17 +101,23 @@ export default function HomePage() {
   return (
     <Screen>
       {/* A. ロゴ / キャッチコピー */}
-      <div className="relative flex items-center justify-between overflow-hidden bg-navy px-4 py-5">
-        {/* 微妙な温かいグロー */}
-        <div className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-primary/20 blur-2xl" />
-        <div>
-          <h1 className="text-[28px] font-extrabold leading-none text-white">
-            はし<span className="text-primary drop-shadow-[0_0_12px_rgba(249,115,22,0.6)]">GO</span>
-          </h1>
-          <p className="mt-1 text-[13px] text-white/70">次、どこ行く？を10秒で。</p>
-        </div>
-        <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
-          <IconLantern size={24} className="text-primary" />
+      <div className="bg-dot-grid relative flex flex-col overflow-hidden bg-navy px-4 pb-6 pt-7">
+        {/* グロー */}
+        <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-primary/25 blur-3xl" />
+        <div className="pointer-events-none absolute -left-10 bottom-0 h-32 w-32 rounded-full bg-navy-light/40 blur-3xl" />
+
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-[36px] font-extrabold leading-none tracking-tight text-white">
+              はし<span className="text-primary drop-shadow-[0_0_16px_rgba(249,115,22,0.8)]">GO</span>
+            </h1>
+            <p className="mt-2 text-[14px] font-medium tracking-wide text-white/65">
+              次のお店、10秒で決めよう。
+            </p>
+          </div>
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10">
+            <IconLantern size={26} className="text-primary" />
+          </div>
         </div>
       </div>
 
@@ -128,7 +135,10 @@ export default function HomePage() {
 
           {/* 現在の地点表示 ＋ 変更 */}
           <div className="mt-2 flex items-center justify-center gap-2">
-            <span className="text-sm font-semibold text-ink">📍 {s.locationLabel}</span>
+            <span className="flex items-center gap-1 text-sm font-semibold text-ink">
+                <IconMap size={13} className="text-primary" />
+                {s.locationLabel}
+              </span>
             <button
               onClick={() => {
                 setEditing((v) => !v);

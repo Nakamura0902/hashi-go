@@ -22,6 +22,7 @@ import {
   IconMap,
   IconLock,
   IconShare,
+  IconGift,
 } from "@/components/ui/icons";
 
 function seatCellClass(free: number) {
@@ -149,8 +150,9 @@ export default function StoreDetailPage() {
         <h1 className="text-[22px] font-bold text-ink">{store.name}</h1>
         {/* #C 社会的証明 */}
         {incoming > 0 && (
-          <p className="mt-1 inline-block rounded-full bg-seat-fewbg px-2.5 py-1 text-xs font-bold text-seat-few">
-            🔥 今 {incoming} 組が向かっています
+          <p className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-seat-fewbg px-2.5 py-1 text-xs font-bold text-seat-few">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-seat-few" />
+            今 {incoming} 組が向かっています
           </p>
         )}
         <div className="mt-1.5 flex flex-wrap gap-1.5">
@@ -158,10 +160,19 @@ export default function StoreDetailPage() {
             <Tag key={m}>{m}</Tag>
           ))}
         </div>
-        <div className="mt-2 space-y-1 text-sm text-sub">
-          <p>📍 徒歩{item.walkMin}分（{formatDistance(item.distanceM)}）· {store.nearestStation}</p>
-          <p>💴 〜{store.averageBudget.toLocaleString()}円 / 人</p>
-          <p>🕐 {store.openTime}〜{store.closeTime.replace(/^(2[4-9]):/, (_, h) => `翌${Number(h) - 24}:`)}（{remainingHours(store.closeTime)}）</p>
+        <div className="mt-2 space-y-1.5 text-sm text-sub">
+          <p className="flex items-center gap-1.5">
+            <IconMap size={14} className="shrink-0 text-muted" />
+            徒歩{item.walkMin}分（{formatDistance(item.distanceM)}） · {store.nearestStation}
+          </p>
+          <p className="flex items-center gap-1.5">
+            <span className="text-xs font-bold text-muted">¥</span>
+            〜{store.averageBudget.toLocaleString()}円 / 人
+          </p>
+          <p className="flex items-center gap-1.5">
+            <IconClock size={14} className="shrink-0 text-muted" />
+            {store.openTime}〜{store.closeTime.replace(/^(2[4-9]):/, (_, h) => `翌${Number(h) - 24}:`)}（{remainingHours(store.closeTime)}）
+          </p>
         </div>
       </div>
 
@@ -169,19 +180,19 @@ export default function StoreDetailPage() {
       <Section title="空席状況">
         <div className="grid grid-cols-3 gap-2">
           {[
-            { label: "2名席", icon: "👥", v: seat.table2 },
-            { label: "4名席", icon: "👥", v: seat.table4 },
-            { label: "カウンター", icon: "🪑", v: seat.counter },
+            { label: "2名席", v: seat.table2 },
+            { label: "4名席", v: seat.table4 },
+            { label: "カウンター", v: seat.counter },
           ].map((c) => (
             <div
               key={c.label}
               className={`flex h-[72px] flex-col items-center justify-center rounded-md ${seatCellClass(c.v.free)}`}
             >
-              <span className="text-base">{c.icon}</span>
-              <span className="mt-0.5 text-xs font-semibold">{c.label}</span>
-              <span className="text-xs font-semibold">
-                {c.v.free > 0 ? `空${c.v.free} / 全${c.v.total}` : `満席 / 全${c.v.total}`}
+              <span className="text-[17px] font-extrabold leading-none">
+                {c.v.free > 0 ? c.v.free : "満"}
               </span>
+              <span className="mt-1 text-xs font-semibold">{c.label}</span>
+              <span className="mt-0.5 text-[10px] opacity-70">全{c.v.total}席</span>
             </div>
           ))}
         </div>
@@ -208,7 +219,9 @@ export default function StoreDetailPage() {
       {/* B-4. 特典 */}
       {offer && (
         <div className="mx-4 mt-6 flex items-start gap-3 rounded-md border-[1.5px] border-primary bg-[#FFF7ED] p-4">
-          <span className="text-2xl">🎁</span>
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/15">
+            <IconGift size={18} className="text-primary" />
+          </div>
           <div>
             <p className="text-sm font-semibold text-primary-dark">
               はしGO来店特典: {offer.title}
