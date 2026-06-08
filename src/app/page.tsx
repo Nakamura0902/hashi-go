@@ -100,14 +100,18 @@ export default function HomePage() {
   return (
     <Screen>
       {/* A. ロゴ / キャッチコピー */}
-      <div className="flex items-center justify-between bg-navy px-4 py-5">
+      <div className="relative flex items-center justify-between overflow-hidden bg-navy px-4 py-5">
+        {/* 微妙な温かいグロー */}
+        <div className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-primary/20 blur-2xl" />
         <div>
           <h1 className="text-[28px] font-extrabold leading-none text-white">
-            はし<span className="text-primary">GO</span>
+            はし<span className="text-primary drop-shadow-[0_0_12px_rgba(249,115,22,0.6)]">GO</span>
           </h1>
-          <p className="mt-1 text-[13px] text-white/75">次、どこ行く？を10秒で。</p>
+          <p className="mt-1 text-[13px] text-white/70">次、どこ行く？を10秒で。</p>
         </div>
-        <IconLantern size={28} className="text-primary" />
+        <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
+          <IconLantern size={24} className="text-primary" />
+        </div>
       </div>
 
       <div className="space-y-3 px-4 py-4">
@@ -116,7 +120,7 @@ export default function HomePage() {
           <SectionLabel>現在地</SectionLabel>
           <button
             onClick={useGps}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full border-[1.5px] border-primary bg-white font-semibold text-primary active:scale-[0.99]"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-full border-[1.5px] border-primary bg-white font-semibold text-primary shadow-[0_2px_10px_rgba(249,115,22,0.12)] active:scale-[0.99]"
           >
             <IconTarget size={20} className={locating ? "animate-spin" : ""} />
             {locating ? "取得中..." : "現在地を使う"}
@@ -212,9 +216,9 @@ export default function HomePage() {
                 <button
                   key={m.label}
                   onClick={() => s.toggleMood(m.label)}
-                  className={`flex h-11 items-center justify-center gap-1.5 rounded-sm text-sm font-medium transition ${
+                  className={`flex h-11 items-center justify-center gap-1.5 rounded-xl text-sm font-medium transition active:scale-[0.98] ${
                     i === MOODS.length - 1 ? "col-span-2" : ""
-                  } ${on ? "bg-navy text-white" : "border border-line bg-bg text-sub"}`}
+                  } ${on ? "bg-navy text-white shadow-sm" : "border border-line bg-white text-sub"}`}
                 >
                   <span>{m.emoji}</span>
                   {m.label}
@@ -234,8 +238,8 @@ export default function HomePage() {
                 <button
                   key={p.label}
                   onClick={() => s.setPurpose(on ? null : p.label)}
-                  className={`flex h-[52px] w-full items-center gap-2 rounded-sm px-3 text-left text-sm font-medium transition ${
-                    on ? "bg-navy text-white" : "border border-line bg-white text-ink"
+                  className={`flex h-[52px] w-full items-center gap-2 rounded-xl px-3 text-left text-sm font-medium transition active:scale-[0.99] ${
+                    on ? "bg-navy text-white shadow-sm" : "border border-line bg-white text-ink"
                   }`}
                 >
                   <span className="text-lg">{p.emoji}</span>

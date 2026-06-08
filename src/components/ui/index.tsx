@@ -79,8 +79,8 @@ export function BigButton({
   const base =
     "flex h-[60px] w-full items-center justify-center gap-2 rounded-full text-lg font-bold transition active:scale-[0.98] disabled:opacity-40 disabled:active:scale-100";
   const styles: Record<string, string> = {
-    primary: "bg-primary text-white shadow-fab",
-    secondary: "bg-navy text-white",
+    primary: "bg-primary text-white shadow-fab hover:brightness-105",
+    secondary: "bg-navy text-white hover:brightness-105",
     outline: "border-[1.5px] border-primary bg-white text-primary",
   };
   const cls = `${base} ${styles[variant]}`;
@@ -135,7 +135,12 @@ export function Card({
 
 // ── セクション見出し ──
 export function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <p className="mb-2 text-[13px] font-semibold text-sub">{children}</p>;
+  return (
+    <p className="mb-2 flex items-center gap-1.5 text-[13px] font-semibold text-sub">
+      <span className="h-3.5 w-[3px] rounded-full bg-primary/60" />
+      {children}
+    </p>
+  );
 }
 
 // ── ピル（フィルター・タグ・選択肢） ──
@@ -154,9 +159,9 @@ export function Chip({
   return (
     <button
       onClick={onClick}
-      className={`flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full font-semibold transition ${pad} ${
+      className={`flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full font-semibold transition active:scale-[0.97] ${pad} ${
         selected
-          ? "bg-navy text-white"
+          ? "bg-navy text-white shadow-sm"
           : "border border-line bg-white text-sub"
       }`}
     >
@@ -168,7 +173,7 @@ export function Chip({
 // 雰囲気タグ（読み取り専用の小チップ）
 export function Tag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-sm bg-navy/10 px-2 py-0.5 text-xs font-semibold text-navy">
+    <span className="rounded-full bg-navy/10 px-2.5 py-0.5 text-xs font-semibold text-navy">
       {children}
     </span>
   );

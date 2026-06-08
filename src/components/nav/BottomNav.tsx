@@ -35,11 +35,11 @@ export function BottomNav() {
                   <span className="absolute top-0 h-[3px] w-8 rounded-full bg-primary" />
                 )}
                 <Icon
-                  size={24}
-                  className={active ? "text-navy-light" : "text-muted"}
+                  size={22}
+                  className={active ? "text-primary" : "text-muted"}
                 />
                 <span
-                  className={`text-[10px] font-medium ${active ? "text-navy-light" : "text-muted"}`}
+                  className={`text-[10px] ${active ? "font-bold text-primary" : "font-medium text-muted"}`}
                 >
                   {label}
                 </span>

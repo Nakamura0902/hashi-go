@@ -37,10 +37,10 @@ export function StoreCard({
   return (
     <article
       onClick={() => router.push(`/store/${store.id}`)}
-      className="animate-card-in overflow-hidden rounded-md bg-white shadow-card"
+      className="animate-card-in cursor-pointer overflow-hidden rounded-md bg-white shadow-card transition-shadow hover:shadow-cardhover"
     >
       {/* 画像 + オーバーレイ */}
-      <div className="relative h-40 w-full bg-bg">
+      <div className="relative h-44 w-full bg-bg">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={store.images[0]}
@@ -48,11 +48,13 @@ export function StoreCard({
           loading="lazy"
           className="h-full w-full object-cover"
         />
+        {/* 下部グラデーション：バッジの視認性向上 */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
         <SeatBadge status={seat.availability} className="absolute left-2 top-2 shadow-sm" />
         <button
           onClick={toggleFav}
           aria-label="お気に入り"
-          className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-white/90 shadow-sm"
+          className="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-full bg-white/90 shadow-sm backdrop-blur-sm active:scale-90"
         >
           <IconHeart size={18} filled={fav} className={fav ? "text-primary" : "text-muted"} />
         </button>
@@ -72,20 +74,20 @@ export function StoreCard({
         </div>
 
         <div className="mt-2 flex items-center gap-3 text-xs text-sub">
-          <span>📍 徒歩{walkMin}分 · {formatDistance(distanceM)}</span>
-          <span>💴 〜{store.averageBudget.toLocaleString()}円/人</span>
+          <span className="flex items-center gap-1">
+            <span className="text-[10px]">📍</span>
+            徒歩{walkMin}分 · {formatDistance(distanceM)}
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="text-[10px]">💴</span>
+            〜{store.averageBudget.toLocaleString()}円/人
+          </span>
         </div>
 
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            router.push(`/store/${store.id}`);
-          }}
-          className="mt-2.5 flex h-11 w-full items-center justify-center gap-1 rounded-full border-[1.5px] border-primary bg-white text-sm font-semibold text-primary active:scale-[0.99]"
-        >
+        <div className="mt-3 flex items-center justify-end gap-0.5 border-t border-line pt-2.5 text-sm font-semibold text-primary">
           詳しく見る
-          <IconArrowRight size={16} />
-        </button>
+          <IconArrowRight size={15} />
+        </div>
       </div>
     </article>
   );
