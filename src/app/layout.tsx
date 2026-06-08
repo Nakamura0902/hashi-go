@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 import { PwaRegister } from "@/components/pwa/PwaRegister";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 
 const noto = Noto_Sans_JP({
   subsets: ["latin"],
@@ -42,7 +43,9 @@ export default function RootLayout({
     <html lang="ja" className={noto.variable}>
       <body className="bg-bg font-sans text-ink antialiased">
         {/* モバイルファースト：アプリ幅を中央寄せ */}
-        <div className="mx-auto min-h-dvh w-full max-w-app bg-bg">{children}</div>
+        <div className="mx-auto min-h-dvh w-full max-w-app bg-bg">
+          <AuthProvider>{children}</AuthProvider>
+        </div>
         <PwaRegister />
       </body>
     </html>

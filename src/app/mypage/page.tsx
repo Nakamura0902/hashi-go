@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { dataApi } from "@/lib/data";
-import { useCurrentUserId } from "@/lib/auth";
+import { useRouter } from "next/navigation";
+import { useCurrentUserId, signOut } from "@/lib/auth";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { hasSupabase } from "@/lib/config";
 import { hasLine, signInWithLine, LINE_SETUP_STEPS } from "@/lib/line";
 import type { UserStats } from "@/lib/types";
 import { BottomNav } from "@/components/nav/BottomNav";
@@ -11,14 +14,31 @@ import { Header, Screen, Card } from "@/components/ui";
 import { IconUser, IconStore, IconChart, IconArrowRight, IconMap, IconHeart } from "@/components/ui/icons";
 
 export default function MyPage() {
+  const router = useRouter();
   const userId = useCurrentUserId();
   const [stats, setStats] = useState<UserStats | null>(null);
   const [lineMsg, setLineMsg] = useState<string | null>(null);
+  const [account, setAccount] = useState<string>("");
 
   useEffect(() => {
     if (!userId) return;
     dataApi.getUserStats(userId).then(setStats);
   }, [userId]);
+
+  // ログイン中アカウント（ニックネーム or メール）を表示
+  useEffect(() => {
+    const sb = getSupabaseBrowserClient();
+    if (!sb) return;
+    sb.auth.getUser().then(({ data }) => {
+      const u = data.user;
+      setAccount(u?.user_metadata?.nickname || u?.email || "");
+    });
+  }, [userId]);
+
+  async function logout() {
+    await signOut();
+    router.replace("/login");
+  }
 
   async function connectLine() {
     const res = await signInWithLine();
@@ -40,8 +60,8 @@ export default function MyPage() {
           <div className="grid h-14 w-14 place-items-center rounded-full bg-navy text-white">
             <IconUser size={28} />
           </div>
-          <div>
-            <p className="font-bold text-ink">ゲストさん</p>
+          <div className="min-w-0">
+            <p className="truncate font-bold text-ink">{account || "ゲストさん"}</p>
             <p className="text-xs text-sub">はしGOで2軒目を楽しもう🍻</p>
           </div>
         </Card>
@@ -108,6 +128,15 @@ export default function MyPage() {
             <Row label="運営管理画面" href="/admin/login" icon={<IconChart size={18} />} />
           </Card>
         </div>
+
+        {hasSupabase && (
+          <button
+            onClick={logout}
+            className="w-full rounded-md border border-line bg-white py-3 text-center text-sm font-semibold text-seat-full active:scale-[0.99]"
+          >
+            ログアウト
+          </button>
+        )}
 
         <p className="pt-2 text-center text-xs text-muted">はしGO MVP v0.2</p>
       </div>

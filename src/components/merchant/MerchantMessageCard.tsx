@@ -16,8 +16,9 @@ export function MerchantMessageCard({ storeId }: { storeId: string }) {
   }, [storeId]);
 
   async function save(text: string) {
-    setMessage(text);
-    await dataApi.setStoreMessage(storeId, text);
+    const safe = text.slice(0, 80); // 文字数制限
+    setMessage(safe);
+    await dataApi.setStoreMessage(storeId, safe);
     setSaved(true);
     setTimeout(() => setSaved(false), 1500);
   }
@@ -29,7 +30,8 @@ export function MerchantMessageCard({ storeId }: { storeId: string }) {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         rows={2}
-        placeholder="例: カウンター空きました！"
+        maxLength={80}
+        placeholder="例: カウンター空きました！（80文字まで）"
         className="w-full rounded-md border border-line p-2 text-sm"
       />
       <div className="mt-2 flex flex-wrap gap-1.5">

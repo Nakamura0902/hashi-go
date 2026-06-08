@@ -17,3 +17,7 @@ export const DEFAULT_ZOOM = 15;
 
 // MVPの簡易ログイン用の固定ユーザーID（Supabaseのuuid型カラムと整合するUUID）
 export const MOCK_USER_ID = "00000000-0000-0000-0000-000000000001";
+
+// 本番ビルド判定。本番ではデモ資格情報の自動入力・表示を行わない（漏えい防止）。
+export const isProd = process.env.NODE_ENV === "production";
+

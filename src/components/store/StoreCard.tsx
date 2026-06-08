@@ -26,6 +26,10 @@ export function StoreCard({
   async function toggleFav(e: React.MouseEvent) {
     e.stopPropagation();
     const userId = await getCurrentUserId();
+    if (!userId) {
+      router.push("/login");
+      return;
+    }
     const on = await dataApi.toggleFavorite(userId, store.id);
     setFav(on);
   }

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { mockStores } from "@/lib/mockData";
 import { setMerchantStoreId } from "@/lib/session";
 import { signInWithEmail } from "@/lib/auth";
-import { hasSupabase } from "@/lib/config";
+import { hasSupabase, isProd } from "@/lib/config";
 import { Screen, Card, BigButton, SectionLabel } from "@/components/ui";
 import { IconLantern } from "@/components/ui/icons";
 
@@ -15,8 +15,9 @@ const DEMO_OWNER = { email: "s-hashigoya@hashigo.jp", password: "hashigo-store-2
 export default function MerchantLoginPage() {
   const router = useRouter();
   const [storeId, setStoreId] = useState(mockStores[0].id);
-  const [email, setEmail] = useState(hasSupabase ? DEMO_OWNER.email : "owner@example.com");
-  const [password, setPassword] = useState(hasSupabase ? DEMO_OWNER.password : "demo");
+  // 本番では資格情報を自動入力しない（漏えい防止）
+  const [email, setEmail] = useState(isProd ? "" : hasSupabase ? DEMO_OWNER.email : "owner@example.com");
+  const [password, setPassword] = useState(isProd ? "" : hasSupabase ? DEMO_OWNER.password : "demo");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 

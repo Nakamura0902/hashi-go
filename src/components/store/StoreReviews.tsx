@@ -33,7 +33,10 @@ export function StoreReviews({ storeId }: { storeId: string }) {
   async function submit() {
     if (!userId || comment.trim() === "") return;
     setPosting(true);
-    await dataApi.addReview(storeId, userId, rating, comment.trim());
+    // 文字数制限＋trim（スパム/肥大化防止）
+    const safe = comment.trim().slice(0, 300);
+    const safeRating = Math.min(5, Math.max(1, Math.round(rating)));
+    await dataApi.addReview(storeId, userId, safeRating, safe);
     setComment("");
     setRating(5);
     setOpen(false);
@@ -81,7 +84,8 @@ export function StoreReviews({ storeId }: { storeId: string }) {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows={2}
-            placeholder="雰囲気・料理・使い勝手など"
+            maxLength={300}
+            placeholder="雰囲気・料理・使い勝手など（300文字まで）"
             className="w-full rounded-md border border-line p-2 text-sm"
           />
           <button

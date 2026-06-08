@@ -1,64 +1,104 @@
 "use client";
 
-// 現在のユーザーIDを解決する。
-// Supabase接続時はゲスト用アカウントへ自動サインインして本物のauth.uid()を返し、
-// RLS(auth.uid()依存)が機能する状態にする。既存セッションがあれば再利用する。
-// （匿名サインインはプロジェクト設定で無効のため、確認済みゲストアカウントを使用）
-// Supabase未接続(モック)時は従来どおりMOCK_USER_IDを返す。
+// 認証コア。アカウント必須モデル。
+// - Supabase接続時: 本物の個人アカウント（メール/Apple）。共有ゲストは廃止し、
+//   各ユーザーが固有の auth.uid() を持つ＝お気に入り/履歴/レビューが個人ごとに分離される。
+// - Supabase未接続(モック)時: ローカル開発用に MOCK_USER_ID を返す（ログイン不要）。
 
 import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "./supabase/client";
-import { MOCK_USER_ID } from "./config";
+import { hasSupabase, MOCK_USER_ID } from "./config";
 
-// デモ用ゲスト（全ユーザー共有・ゲスト権限のみ）
-const GUEST = { email: "guest@hashigo.jp", password: "hashigo-guest-2026" };
-
-export async function getCurrentUserId(): Promise<string> {
+// 現在のユーザーID。未ログイン時は null（Supabaseモード）。モック時は固定ID。
+export async function getCurrentUserId(): Promise<string | null> {
   const sb = getSupabaseBrowserClient();
   if (!sb) return MOCK_USER_ID;
-
   const {
     data: { session },
   } = await sb.auth.getSession();
-  if (session?.user) return session.user.id;
-
-  // セッションが無ければゲスト自動サインイン（何も入力させずにJWTを発行）
-  const { data, error } = await sb.auth.signInWithPassword(GUEST);
-  if (error || !data.user) {
-    console.error("ゲストサインインに失敗しました:", error?.message);
-    return MOCK_USER_ID;
-  }
-  return data.user.id;
+  return session?.user?.id ?? null;
 }
 
-// クライアントコンポーネント用フック。解決前は null を返す。
+// クライアント用フック。解決前は undefined、未ログインは null、ログイン済みはuid。
 export function useCurrentUserId(): string | null {
   const [userId, setUserId] = useState<string | null>(null);
   useEffect(() => {
     let active = true;
-    getCurrentUserId().then((id) => {
-      if (active) setUserId(id);
+    const sb = getSupabaseBrowserClient();
+    if (!sb) {
+      setUserId(MOCK_USER_ID);
+      return;
+    }
+    getCurrentUserId().then((id) => active && setUserId(id));
+    // セッション変化に追従
+    const { data } = sb.auth.onAuthStateChange((_e, session) => {
+      if (active) setUserId(session?.user?.id ?? null);
     });
     return () => {
       active = false;
+      data.subscription.unsubscribe();
     };
   }, []);
   return userId;
 }
 
-// ── 店舗オーナー／管理者ログイン（Supabase Auth） ──
-// 店舗/管理者アカウントが用意されている場合に使用。
+// ── ユーザー向け 認証フロー ──
+
+export async function signUpWithEmail(
+  email: string,
+  password: string,
+  nickname?: string
+): Promise<{ ok: boolean; needConfirm?: boolean; error?: string }> {
+  const sb = getSupabaseBrowserClient();
+  if (!sb) return { ok: true };
+  const { data, error } = await sb.auth.signUp({
+    email,
+    password,
+    options: { data: nickname ? { nickname } : undefined },
+  });
+  if (error) return { ok: false, error: error.message };
+  // メール確認が必要な設定だと session は null（確認待ち）
+  return { ok: true, needConfirm: !data.session };
+}
 
 export async function signInWithEmail(
   email: string,
   password: string
 ): Promise<{ ok: boolean; uid?: string; error?: string }> {
   const sb = getSupabaseBrowserClient();
-  if (!sb) return { ok: true, uid: undefined }; // モード: モック（呼び出し側でlocalStorage運用）
+  if (!sb) return { ok: true, uid: undefined };
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error || !data.user) return { ok: false, error: error?.message ?? "ログインに失敗しました" };
+  if (error || !data.user)
+    return { ok: false, error: error?.message ?? "ログインに失敗しました" };
   return { ok: true, uid: data.user.id };
 }
+
+// Apple サインイン（iOS申請で実質必須）。Supabaseで Apple プロバイダ設定が必要。
+// 未設定ならエラーを返す（呼び出し側でガイド表示）。
+export async function signInWithApple(): Promise<{ ok: boolean; error?: string }> {
+  const sb = getSupabaseBrowserClient();
+  if (!sb) return { ok: false, error: "supabase-unconfigured" };
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: "apple",
+    options: {
+      redirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
+    },
+  });
+  return { ok: !error, error: error?.message };
+}
+
+export async function sendPasswordReset(
+  email: string
+): Promise<{ ok: boolean; error?: string }> {
+  const sb = getSupabaseBrowserClient();
+  if (!sb) return { ok: false, error: "supabase-unconfigured" };
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: typeof window !== "undefined" ? `${window.location.origin}/login` : undefined,
+  });
+  return { ok: !error, error: error?.message };
+}
+
+// ── 店舗オーナー／管理者 ──
 
 // サインイン中アカウントが所有する店舗IDを返す（無ければnull）
 export async function getOwnedStoreId(): Promise<string | null> {
@@ -80,3 +120,6 @@ export async function signOut(): Promise<void> {
   const sb = getSupabaseBrowserClient();
   await sb?.auth.signOut();
 }
+
+// 認証が必須かどうか（Supabase接続時のみ必須）
+export const authRequired = hasSupabase;

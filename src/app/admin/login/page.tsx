@@ -4,14 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { setAdmin } from "@/lib/session";
 import { signInWithEmail } from "@/lib/auth";
-import { hasSupabase } from "@/lib/config";
+import { hasSupabase, isProd } from "@/lib/config";
 import { Screen, Card, BigButton, SectionLabel } from "@/components/ui";
 import { IconChart } from "@/components/ui/icons";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@hashigo.jp");
-  const [password, setPassword] = useState(hasSupabase ? "hashigo-admin-2026" : "demo");
+  // 本番では資格情報を自動入力しない（漏えい防止）
+  const [email, setEmail] = useState(isProd ? "" : "admin@hashigo.jp");
+  const [password, setPassword] = useState(isProd ? "" : hasSupabase ? "hashigo-admin-2026" : "demo");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -69,7 +70,11 @@ export default function AdminLoginPage() {
         </Card>
         <BigButton onClick={login} loading={loading}>ログイン</BigButton>
         <p className="text-center text-xs text-muted">
-          {hasSupabase ? "デモ: admin@hashigo.jp / hashigo-admin-2026" : "デモ環境のため、任意の入力でログインできます"}
+          {isProd
+            ? "権限のあるアカウントでログインしてください"
+            : hasSupabase
+              ? "デモ: admin@hashigo.jp / hashigo-admin-2026"
+              : "デモ環境のため、任意の入力でログインできます"}
         </p>
       </div>
     </Screen>
