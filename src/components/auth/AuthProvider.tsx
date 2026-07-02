@@ -13,6 +13,8 @@ import { Spinner } from "@/components/ui";
 function isPublicPath(path: string): boolean {
   return (
     path === "/login" ||
+    path === "/terms" ||
+    path === "/privacy" ||
     path.startsWith("/merchant") ||
     path.startsWith("/admin")
   );

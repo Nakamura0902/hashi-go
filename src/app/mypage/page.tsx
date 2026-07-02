@@ -105,6 +105,8 @@ export default function MyPage() {
           <Card className="divide-y divide-line">
             <Row label="お気に入りのお店" href="/favorites" />
             <Row label="来店履歴" href="/history" />
+            <Row label="利用規約" href="/terms" />
+            <Row label="プライバシーポリシー" href="/privacy" />
             <button onClick={connectLine} className="w-full">
               <div className="flex h-12 items-center gap-3 px-4">
                 <span className="text-[#06C755]">🟢</span>

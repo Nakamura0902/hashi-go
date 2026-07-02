@@ -417,9 +417,10 @@ export const supabaseApi = {
   ): Promise<void> {
     const sb = getSupabaseBrowserClient();
     if (!sb) return mockApi.addGroupCandidate(groupId, storeId, storeName, addedBy);
+    // 重複追加は無視（UPDATEを避け、insertのみでRLSを満たす）
     await sb.from("group_candidates").upsert(
       { id: `${groupId}-${storeId}`, group_id: groupId, store_id: storeId, store_name: storeName, added_by: addedBy },
-      { onConflict: "id" }
+      { onConflict: "id", ignoreDuplicates: true }
     );
   },
 

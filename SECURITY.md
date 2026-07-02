@@ -64,10 +64,25 @@ WebをCapacitor/ネイティブWebViewでラップする想定。
 
 ---
 
-## 8. 既知の残課題（本番化TODO）
-- [ ] `is_admin()` メール判定 → ロールクレームへ
-- [ ] デモアカウントのパスワード変更/削除
-- [ ] Confirm email / Leaked Password Protection をダッシュボードでON
-- [ ] Apple プロバイダ設定（iOS）
-- [ ] レート制限の強化（Edge Function）
-- [ ] 利用規約・プライバシーポリシーの整備（`/login` に表示済みの文言のリンク先）
+## 8. 本番化TODO
+
+### 実装済み（コード/DB側）
+- [x] `is_admin()` を**メール判定 → `admins` テーブル参照**に変更（`admins` にadmin uidをseed）
+- [x] グループRLSを `USING(true)` → **本人/追加者(auth.uid())基準**に厳格化
+- [x] `incoming_count` は **anon 実行を剥奪**（認証ユーザーのみ）
+- [x] RLSインデックス追加（`stores.owner_user_id` / `group_*` / `reviews`）
+- [x] **利用規約 `/terms`・プライバシーポリシー `/privacy`**（ドラフト）＋ `/login`・マイページからリンク
+- [x] GitHub Actions CI（`tsc`＋`build`）
+
+### あなたの対応が必要（ダッシュボード/契約/外部）
+- [ ] Supabase Auth: **Email有効化・Confirm email・Site URL/Redirect URLs**
+- [ ] Supabase Auth: **Leaked Password Protection を ON**
+- [ ] デモアカウント（guest/admin/store）の**パスワード変更 or 削除**
+- [ ] Mapboxトークンに**ドメイン制限**、Supabase **Proプラン＋バックアップ**、独自ドメイン
+- [ ] Apple プロバイダ設定（iOS）、Apple Developer登録
+- [ ] `/terms`・`/privacy` の**本文を法務確認のうえ確定**（現状ドラフト）
+
+### 追加実装が望ましい（次段階）
+- [ ] 店舗オーナーの**セキュアなアカウント発行フロー**（service_role を使う Edge Function。現状は全店を1デモオーナーが所有）
+- [ ] レビュー/来店の**レート制限**（Edge Function）
+- [ ] エラー監視（Sentry）・利用計測、E2Eテスト

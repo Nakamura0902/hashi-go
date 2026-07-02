@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   signInWithEmail,
@@ -189,7 +190,11 @@ export default function LoginPage() {
         )}
 
         <p className="pt-2 text-center text-[11px] leading-relaxed text-muted">
-          続行することで利用規約・プライバシーポリシーに同意したものとみなします。
+          続行することで
+          <Link href="/terms" className="underline">利用規約</Link>
+          ・
+          <Link href="/privacy" className="underline">プライバシーポリシー</Link>
+          に同意したものとみなします。
         </p>
       </div>
     </Screen>
