@@ -22,8 +22,8 @@ export const metadata: Metadata = {
     title: "はしGO",
   },
   icons: {
-    icon: "/icon.svg",
-    apple: "/icon.svg",
+    icon: "/icon.png",
+    apple: "/icon.png",
   },
 };
 
